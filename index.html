@@ -173,6 +173,7 @@ pre{font-family:var(--mono);font-size:11.5px;color:#c9d1d9;background:#0d1117;bo
     <div class="tabs">
       <div class="tab active" onclick="switchTab('queries',this)">Saved queries</div>
       <div class="tab" onclick="switchTab('ai',this)">AI assistant</div>
+      <div class="tab" onclick="switchTab('settings',this)" id="settings-tab">Settings</div>
     </div>
     <div class="tab-pane active" id="tab-queries">
       <div class="qbar">
@@ -233,8 +234,40 @@ pre{font-family:var(--mono);font-size:11.5px;color:#c9d1d9;background:#0d1117;bo
       </div>
     </div>
   </div>
+
 </div>
 <div class="toast" id="toast"></div>
+
+<!-- SETTINGS TAB PANE (inside .main, inserted via JS) -->
+<div class="tab-pane" id="tab-settings" style="display:none;flex:1;flex-direction:column;overflow:hidden">
+  <div style="flex:1;overflow-y:auto;padding:24px">
+    <div style="max-width:500px">
+      <div style="font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px">Claude AI setup</div>
+      <div style="font-size:12px;color:var(--text2);line-height:1.7;margin-bottom:24px">To use the AI assistant, you need an Anthropic API key. Your key is stored only in your browser and sent directly to Anthropic — nowhere else.</div>
+      <div style="background:var(--bg2);border:1px solid var(--border2);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px">
+        <label style="font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:0.06em;font-family:var(--mono);display:block;margin-bottom:8px">Anthropic API key</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <input type="password" id="api-key-input" placeholder="sk-ant-api03-..." style="flex:1;background:var(--bg3);border:1px solid var(--border2);border-radius:var(--radius);padding:9px 12px;font-size:13px;color:var(--text);font-family:var(--mono);outline:none">
+          <button class="btn primary" onclick="saveApiKey()">Save key</button>
+        </div>
+        <div id="key-status" style="font-size:12px;color:var(--text3);font-family:var(--mono)">Loading...</div>
+      </div>
+      <div style="background:var(--bg2);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px">
+        <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:12px">How to get a free API key</div>
+        <div style="font-size:12px;color:var(--text2);line-height:2.2">
+          <div>1. Go to <a href="https://console.anthropic.com" target="_blank" style="color:var(--accent)">console.anthropic.com</a></div>
+          <div>2. Sign up for a free account</div>
+          <div>3. Click <b style="color:var(--text)">API Keys</b> in the left sidebar</div>
+          <div>4. Click <b style="color:var(--text)">Create Key</b> and copy it</div>
+          <div>5. Paste it above and click <b style="color:var(--text)">Save key</b></div>
+        </div>
+      </div>
+      <div style="background:var(--amber-bg);border:1px solid var(--amber-border);border-radius:var(--radius);padding:12px 14px;font-size:12px;color:var(--amber);line-height:1.7">
+        Free accounts get $5 credit — enough for hundreds of SQL queries. Each team member should add their own key on their own device.
+      </div>
+    </div>
+  </div>
+</div>
 
 <script>
 var STORE = 'team_sql_v3';
@@ -273,9 +306,41 @@ function updateAvatar() {
 
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
-  document.querySelectorAll('.tab-pane').forEach(function(t){ t.classList.remove('active'); });
+  document.querySelectorAll('.tab-pane').forEach(function(t){ t.classList.remove('active'); t.style.display='none'; });
   el.classList.add('active');
-  document.getElementById('tab-'+name).classList.add('active');
+  var pane = document.getElementById('tab-'+name);
+  pane.classList.add('active');
+  pane.style.display='flex';
+  if (name==='settings') updateKeyStatus();
+}
+
+function getApiKey() { return localStorage.getItem('anthropic_api_key')||''; }
+
+function saveApiKey() {
+  var val = (document.getElementById('api-key-input').value||'').trim();
+  if (!val) { toast('Please paste your API key first','danger'); return; }
+  if (val.indexOf('sk-ant-')<0) { toast('Key should start with sk-ant-','danger'); return; }
+  localStorage.setItem('anthropic_api_key', val);
+  document.getElementById('api-key-input').value='';
+  updateKeyStatus();
+  toast('API key saved! Claude is ready.','success');
+}
+
+function updateKeyStatus() {
+  var el = document.getElementById('key-status');
+  if (!el) return;
+  var k = getApiKey();
+  if (k) {
+    el.innerHTML = '<span style="color:var(--green)">Key saved: '+k.slice(0,12)+'••••••••</span> &nbsp;<button class="btn sm danger" onclick="clearApiKey()" style="font-size:10px;padding:2px 8px">Remove</button>';
+  } else {
+    el.innerHTML = '<span style="color:var(--text3)">No key saved yet.</span>';
+  }
+}
+
+function clearApiKey() {
+  localStorage.removeItem('anthropic_api_key');
+  updateKeyStatus();
+  toast('API key removed','danger');
 }
 
 function renderCats() {
@@ -554,9 +619,14 @@ function askAI(userMsg) {
   aiHistory.push({role:'user',content:userMsg});
   var ctx=data.queries.slice(0,5).map(function(q){ return '- "'+q.title+'": '+q.sql.slice(0,80); }).join('\n');
   var thinking=addMsg('ai','<span class="thinking">Claude is thinking...</span>');
+  var apiKey = getApiKey();
+  if (!apiKey) {
+    thinking.innerHTML='<div class="msg-label">Claude AI</div><div style="color:var(--amber)">No API key set. Click the <b>Settings</b> tab and enter your Anthropic API key to use Claude.</div>';
+    return;
+  }
   fetch('https://api.anthropic.com/v1/messages',{
     method:'POST',
-    headers:{'Content-Type':'application/json'},
+    headers:{'Content-Type':'application/json','x-api-key':apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
     body:JSON.stringify({
       model:'claude-sonnet-4-20250514',
       max_tokens:1200,
@@ -618,7 +688,17 @@ document.getElementById('cat-modal').addEventListener('click',function(e){
 });
 
 activeCat='All'; openId=null; editId=null; aiHistory=[];
-initData(); renderCats(); renderList(); updateStats();
+initData();
+// Move settings pane into .main div
+var mainDiv = document.querySelector('.main');
+var settingsPane = document.getElementById('tab-settings');
+mainDiv.appendChild(settingsPane);
+renderCats(); renderList(); updateStats(); updateKeyStatus();
+// Show yellow dot on settings tab if no key
+if (!getApiKey()) {
+  var stab = document.getElementById('settings-tab');
+  if (stab) stab.innerHTML = 'Settings <span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:var(--amber);vertical-align:middle;margin-left:3px"></span>';
+}
 </script>
 </body>
 </html>
