@@ -41,9 +41,9 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 ::-webkit-scrollbar { width: 4px; height: 4px; }
 ::-webkit-scrollbar-track { background: transparent; }
 ::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
-
+ 
 .app { display: flex; height: 100vh; overflow: hidden; }
-
+ 
 /* SIDEBAR */
 .sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
 .sb-logo { padding: 18px 16px 14px; border-bottom: 1px solid var(--border); }
@@ -59,11 +59,23 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .cat-item.active { background: var(--bg3); color: var(--text); border-left: 2px solid var(--accent); }
 .cat-count { font-size: 10px; background: var(--bg4); color: var(--text3); padding: 1px 6px; border-radius: 10px; font-family: var(--mono); }
 .sb-footer { padding: 10px 12px; border-top: 1px solid var(--border); }
-.sb-footer input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; font-size: 11px; color: var(--text); font-family: var(--font); outline: none; margin-bottom: 6px; }
-.sb-footer input::placeholder { color: var(--text3); }
-.sb-btn { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px; font-size: 11px; color: var(--text2); cursor: pointer; font-family: var(--font); transition: all 0.15s; }
-.sb-btn:hover { background: var(--bg4); color: var(--text); }
-
+.sb-btn { width: 100%; background: var(--accent-bg); border: 1px solid var(--accent-border); border-radius: var(--radius); padding: 8px; font-size: 12px; color: var(--accent); cursor: pointer; font-family: var(--font); font-weight: 600; transition: all 0.15s; }
+.sb-btn:hover { background: rgba(79,156,249,0.22); }
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 1000; display: flex; align-items: center; justify-content: center; }
+.modal-overlay.hidden { display: none; }
+.modal { background: var(--bg2); border: 1px solid var(--border2); border-radius: var(--radius-lg); padding: 24px; width: 380px; }
+.modal h3 { font-size: 15px; font-weight: 700; color: var(--text); margin-bottom: 6px; }
+.modal p { font-size: 12px; color: var(--text2); margin-bottom: 16px; }
+.modal-input { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 10px 12px; font-size: 14px; color: var(--text); font-family: var(--font); outline: none; margin-bottom: 12px; }
+.modal-input:focus { border-color: var(--accent-border); }
+.modal-input::placeholder { color: var(--text3); }
+.modal-label { font-size: 10px; color: var(--text3); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--mono); margin-bottom: 8px; display: block; }
+.suggested-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
+.sug-cat { font-size: 11px; padding: 4px 11px; border: 1px solid var(--border2); border-radius: 14px; color: var(--text2); cursor: pointer; background: var(--bg3); transition: all 0.15s; font-family: var(--font); }
+.sug-cat:hover { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+.modal-btns { display: flex; gap: 8px; margin-top: 4px; }
+.modal-btns .btn { flex: 1; padding: 9px; font-size: 13px; }
+ 
 /* MAIN */
 .main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
 .top-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
@@ -80,7 +92,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .btn.success { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
 .btn.danger { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
 .btn.sm { font-size: 11px; padding: 4px 10px; }
-
+ 
 /* TABS */
 .tabs { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .tab { padding: 10px 18px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
@@ -88,7 +100,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 .tab.active { color: var(--accent); border-bottom-color: var(--accent); }
 .tab-pane { display: none; flex: 1; flex-direction: column; overflow: hidden; }
 .tab-pane.active { display: flex; }
-
+ 
 /* QUERY LIST */
 .qbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
 .qbar input { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font-size: 12px; color: var(--text); font-family: var(--font); outline: none; flex: 1; }
@@ -116,7 +128,7 @@ html, body { height: 100%; background: var(--bg); color: var(--text); font-famil
 pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #0d1117; border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 12px 14px; overflow-x: auto; white-space: pre; line-height: 1.7; max-height: 180px; overflow-y: auto; }
 .qbtns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
 .empty { text-align: center; padding: 3rem; color: var(--text3); font-size: 13px; line-height: 2; }
-
+ 
 /* AI CHAT */
 .ai-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
 .ai-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
@@ -136,7 +148,7 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
 .save-suggestion { background: var(--bg); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 10px 12px; margin-top: 10px; }
 .save-suggestion p { font-size: 11px; color: var(--green); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--mono); }
 .save-suggestion h4 { font-size: 13px; color: var(--text); margin-bottom: 8px; }
-
+ 
 /* RIGHT PANEL */
 .rpanel { width: 270px; border-left: 1px solid var(--border); background: var(--bg2); display: flex; flex-direction: column; flex-shrink: 0; }
 .rp-head { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); }
@@ -154,23 +166,23 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
 .form-group textarea { resize: vertical; min-height: 58px; line-height: 1.5; }
 .form-group textarea.code { font-family: var(--mono); font-size: 11px; min-height: 130px; }
 .rp-foot { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; }
-
+ 
 /* TOAST */
 .toast { position: fixed; bottom: 20px; right: 20px; font-size: 12px; padding: 10px 16px; border-radius: var(--radius); opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 999; border: 1px solid; font-family: var(--font); font-weight: 500; }
 .toast.show { opacity: 1; }
 .toast.success { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
 .toast.danger { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
 .toast.info { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
-
+ 
 /* WELCOME NOTE */
 .welcome { font-size: 12px; color: var(--text2); line-height: 1.8; }
 .welcome b { color: var(--text); }
 </style>
 </head>
 <body>
-
+ 
 <div class="app">
-
+ 
   <!-- SIDEBAR -->
   <div class="sidebar">
     <div class="sb-logo">
@@ -182,11 +194,37 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
     </div>
     <div class="cat-list" id="cat-list"></div>
     <div class="sb-footer">
-      <input type="text" id="new-cat" placeholder="New collection name...">
-      <button class="sb-btn" onclick="addCat()">+ Add collection</button>
+      <button class="sb-btn" onclick="openCatModal()">+ New collection</button>
     </div>
   </div>
-
+ 
+  <!-- ADD COLLECTION MODAL -->
+  <div class="modal-overlay hidden" id="cat-modal" onclick="closeCatModal(event)">
+    <div class="modal" onclick="event.stopPropagation()">
+      <h3>Create collection</h3>
+      <p>Organise your queries into named collections.</p>
+      <label class="modal-label">Collection name</label>
+      <input class="modal-input" type="text" id="new-cat" placeholder="e.g. Finance Queries, ETL Jobs..." autofocus>
+      <label class="modal-label">Quick suggestions</label>
+      <div class="suggested-cats">
+        <span class="sug-cat" onclick="pickSugCat('Analytics')">Analytics</span>
+        <span class="sug-cat" onclick="pickSugCat('ETL')">ETL</span>
+        <span class="sug-cat" onclick="pickSugCat('Reporting')">Reporting</span>
+        <span class="sug-cat" onclick="pickSugCat('Performance')">Performance</span>
+        <span class="sug-cat" onclick="pickSugCat('Finance')">Finance</span>
+        <span class="sug-cat" onclick="pickSugCat('HR')">HR</span>
+        <span class="sug-cat" onclick="pickSugCat('Marketing')">Marketing</span>
+        <span class="sug-cat" onclick="pickSugCat('Operations')">Operations</span>
+        <span class="sug-cat" onclick="pickSugCat('Archive')">Archive</span>
+        <span class="sug-cat" onclick="pickSugCat('Temp')">Temp</span>
+      </div>
+      <div class="modal-btns">
+        <button class="btn primary" onclick="addCat()">Create collection</button>
+        <button class="btn" onclick="closeCatModal()">Cancel</button>
+      </div>
+    </div>
+  </div>
+ 
   <!-- MAIN -->
   <div class="main">
     <div class="top-bar">
@@ -199,12 +237,12 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
         <button class="btn primary" onclick="openNew()">+ New query</button>
       </div>
     </div>
-
+ 
     <div class="tabs">
       <div class="tab active" onclick="switchTab('queries',this)">Saved queries</div>
       <div class="tab" onclick="switchTab('ai',this)">AI assistant</div>
     </div>
-
+ 
     <!-- QUERIES TAB -->
     <div class="tab-pane active" id="tab-queries">
       <div class="qbar">
@@ -223,7 +261,7 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
       </div>
       <div class="qlist" id="qlist"></div>
     </div>
-
+ 
     <!-- AI TAB -->
     <div class="tab-pane" id="tab-ai">
       <div class="ai-wrap">
@@ -249,7 +287,7 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
       </div>
     </div>
   </div>
-
+ 
   <!-- RIGHT PANEL -->
   <div class="rpanel" id="rpanel">
     <div class="rp-head"><h3 id="rp-title">Overview</h3></div>
@@ -270,18 +308,18 @@ pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #
       </div>
     </div>
   </div>
-
+ 
 </div>
-
+ 
 <div class="toast" id="toast"></div>
-
+ 
 <script>
 const STORE = 'team_sql_v2';
 const defaultCats = ['All','SELECT','INSERT','UPDATE','DELETE','DDL','Reporting','ETL','Performance'];
 function td(){ return new Date().toISOString().slice(0,10); }
 function uid(){ return 'q' + Date.now() + Math.random().toString(36).slice(2,6); }
 function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
+ 
 const defaultQueries = [
   { id:'q1', title:'Active users', cat:'SELECT', type:'select', author:'Admin', desc:'All active users ordered by signup date.', sql:`SELECT id, name, email, created_at\nFROM users\nWHERE status = 'active'\nORDER BY created_at DESC;`, date: td() },
   { id:'q2', title:'Monthly revenue report', cat:'Reporting', type:'select', author:'Admin', desc:'Revenue and order count grouped by month for the current year.', sql:`SELECT\n  DATE_FORMAT(order_date, '%Y-%m') AS month,\n  SUM(amount)                       AS revenue,\n  COUNT(*)                          AS total_orders\nFROM orders\nWHERE YEAR(order_date) = YEAR(CURDATE())\nGROUP BY month\nORDER BY month;`, date: td() },
@@ -289,32 +327,32 @@ const defaultQueries = [
   { id:'q4', title:'Update user email', cat:'UPDATE', type:'update', author:'Admin', desc:'Update a user email address by their ID.', sql:`UPDATE users\nSET    email      = 'new@email.com',\n       updated_at = NOW()\nWHERE  id = 1;`, date: td() },
   { id:'q5', title:'Create users table', cat:'DDL', type:'ddl', author:'Admin', desc:'Full users table definition with indexes.', sql:`CREATE TABLE users (\n  id         INT          PRIMARY KEY AUTO_INCREMENT,\n  name       VARCHAR(100) NOT NULL,\n  email      VARCHAR(150) UNIQUE NOT NULL,\n  status     ENUM('active','inactive') DEFAULT 'active',\n  created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_status (status),\n  INDEX idx_email  (email)\n);`, date: td() },
 ];
-
+ 
 function loadData() {
   try { const d = JSON.parse(localStorage.getItem(STORE)); if(d) return d; } catch(e){}
   return { cats: [...defaultCats], queries: [...defaultQueries] };
 }
 function saveData(d) { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch(e){} }
-
+ 
 let data = loadData();
 let activeCat = 'All';
 let openId = null;
 let editId = null;
 let aiHistory = [];
-
+ 
 function getAuthor() { return document.getElementById('author-name').value.trim() || 'Anonymous'; }
 function updateAvatar() {
   const v = document.getElementById('author-name').value.trim();
   document.getElementById('avatar').textContent = v ? v.slice(0,2).toUpperCase() : '?';
 }
-
+ 
 function switchTab(name, el) {
   document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
   document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
   el.classList.add('active');
   document.getElementById('tab-' + name).classList.add('active');
 }
-
+ 
 function renderCats() {
   const cl = document.getElementById('cat-list');
   cl.innerHTML = '';
@@ -322,12 +360,12 @@ function renderCats() {
     const cnt = c === 'All' ? data.queries.length : data.queries.filter(q => q.cat === c).length;
     const d = document.createElement('div');
     d.className = 'cat-item' + (activeCat === c ? ' active' : '');
-    d.innerHTML = `<span>${esc(c)}</span><span class="cat-count">${cnt}</span>`;
+    d.innerHTML = `<span>${esc(c)}</span><span style="display:flex;align-items:center;gap:5px"><span class="cat-count">${cnt}</span>${c !== 'All' ? `<span onclick="delCat('${esc(c)}',event)" style="color:var(--text3);font-size:13px;line-height:1;padding:0 2px;cursor:pointer" title="Delete collection">×</span>` : ''}</span>`;
     d.onclick = () => { activeCat = c; document.getElementById('page-title').textContent = c === 'All' ? 'All queries' : c; renderCats(); renderList(); closePanel(); };
     cl.appendChild(d);
   });
 }
-
+ 
 function renderList() {
   const ql = document.getElementById('qlist');
   const q1 = (document.getElementById('gsearch').value || '').toLowerCase();
@@ -373,27 +411,27 @@ function renderList() {
   });
   updateStats();
 }
-
+ 
 function toggleQ(id) { openId = openId === id ? null : id; renderList(); }
-
+ 
 function updateStats() {
   document.getElementById('s-total').textContent = data.queries.length;
   document.getElementById('s-cats').textContent = data.cats.filter(c => c !== 'All').length;
   document.getElementById('s-authors').textContent = new Set(data.queries.map(q => q.author)).size;
   document.getElementById('s-today').textContent = data.queries.filter(q => q.date === td()).length;
 }
-
+ 
 function openNew() {
   editId = null;
   showForm({ title:'', cat: activeCat === 'All' ? 'SELECT' : activeCat, type:'select', desc:'', sql:'' });
 }
-
+ 
 function editQ(id, e) {
   e.stopPropagation(); editId = id;
   const item = data.queries.find(q => q.id === id);
   if (item) showForm(item);
 }
-
+ 
 function showForm(item) {
   document.getElementById('rp-title').textContent = editId ? 'Edit query' : 'New query';
   const cats = data.cats.filter(c => c !== 'All').map(c => `<option value="${c}"${item.cat===c?' selected':''}>${esc(c)}</option>`).join('');
@@ -411,7 +449,7 @@ function showForm(item) {
   foot.innerHTML = `<button class="btn primary" style="flex:1" onclick="saveForm()">Save query</button><button class="btn" onclick="closePanel()">Cancel</button>`;
   document.getElementById('rpanel').appendChild(foot);
 }
-
+ 
 function saveForm() {
   const title = document.getElementById('f-title').value.trim();
   const sql = document.getElementById('f-sql').value.trim();
@@ -435,7 +473,7 @@ function saveForm() {
   closePanel(); renderCats(); renderList();
   toast('Query saved!', 'success');
 }
-
+ 
 function delQ(id, e) {
   e.stopPropagation();
   if (!confirm('Delete this query?')) return;
@@ -445,14 +483,14 @@ function delQ(id, e) {
   renderCats(); renderList();
   toast('Deleted', 'danger');
 }
-
+ 
 function copyQ(id, e) {
   e.stopPropagation();
   const item = data.queries.find(q => q.id === id);
   if (!item) return;
   navigator.clipboard.writeText(item.sql).then(() => toast('SQL copied!', 'success'));
 }
-
+ 
 function askAbout(id, e) {
   e.stopPropagation();
   const item = data.queries.find(q => q.id === id);
@@ -460,7 +498,7 @@ function askAbout(id, e) {
   switchTab('ai', document.querySelectorAll('.tab')[1]);
   askAI(`Please explain this query and suggest any improvements:\n\n${item.sql}`);
 }
-
+ 
 function closePanel() {
   editId = null;
   document.getElementById('rp-title').textContent = 'Overview';
@@ -481,17 +519,48 @@ function closePanel() {
   if (ef) ef.remove();
   updateStats();
 }
-
+ 
+function openCatModal() {
+  document.getElementById('cat-modal').classList.remove('hidden');
+  setTimeout(() => document.getElementById('new-cat').focus(), 50);
+}
+function closeCatModal(e) {
+  if (!e || e.target === document.getElementById('cat-modal')) {
+    document.getElementById('cat-modal').classList.add('hidden');
+    document.getElementById('new-cat').value = '';
+  }
+}
+function pickSugCat(name) {
+  document.getElementById('new-cat').value = name;
+  document.getElementById('new-cat').focus();
+}
 function addCat() {
   const inp = document.getElementById('new-cat');
   const v = inp.value.trim();
-  if (!v || data.cats.includes(v)) return;
-  data.cats.push(v); saveData(data); inp.value = '';
-  renderCats(); toast('"' + v + '" added', 'info');
+  if (!v) { inp.focus(); inp.style.borderColor = 'var(--red-border)'; setTimeout(() => inp.style.borderColor = '', 1000); return; }
+  if (data.cats.includes(v)) { toast('"' + v + '" already exists', 'danger'); return; }
+  data.cats.push(v); saveData(data);
+  closeCatModal();
+  renderCats();
+  activeCat = v;
+  document.getElementById('page-title').textContent = v;
+  renderCats(); renderList();
+  toast('"' + v + '" collection created!', 'success');
 }
-document.getElementById('new-cat').addEventListener('keydown', e => { if (e.key === 'Enter') addCat(); });
-
-function exportData() {
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') closeCatModal();
+  if (e.key === 'Enter' && !document.getElementById('cat-modal').classList.contains('hidden')) addCat();
+});
+ 
+function delCat(name, e) {
+  e.stopPropagation();
+  if (!confirm('Delete collection "' + name + '"? Queries inside will not be deleted — they will move to All.')) return;
+  data.cats = data.cats.filter(c => c !== name);
+  saveData(data);
+  if (activeCat === name) { activeCat = 'All'; document.getElementById('page-title').textContent = 'All queries'; }
+  renderCats(); renderList();
+  toast('"' + name + '" removed', 'danger');
+}
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -499,7 +568,7 @@ function exportData() {
   a.click();
   toast('Exported!', 'success');
 }
-
+ 
 function importData(e) {
   const file = e.target.files[0];
   if (!file) return;
@@ -521,7 +590,7 @@ function importData(e) {
   reader.readAsText(file);
   e.target.value = '';
 }
-
+ 
 function toast(msg, type) {
   const t = document.getElementById('toast');
   t.textContent = msg;
@@ -529,9 +598,9 @@ function toast(msg, type) {
   t.classList.add('show');
   setTimeout(() => t.classList.remove('show'), 2400);
 }
-
+ 
 function aiKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAI(); } }
-
+ 
 function addMsg(role, html) {
   const box = document.getElementById('ai-msgs');
   const d = document.createElement('div');
@@ -541,7 +610,7 @@ function addMsg(role, html) {
   box.scrollTop = box.scrollHeight;
   return d;
 }
-
+ 
 async function sendAI() {
   const ta = document.getElementById('ai-input');
   const msg = ta.value.trim();
@@ -549,14 +618,14 @@ async function sendAI() {
   ta.value = ''; ta.style.height = '42px';
   askAI(msg);
 }
-
+ 
 async function askAI(userMsg) {
   switchTab('ai', document.querySelectorAll('.tab')[1]);
   addMsg('user', esc(userMsg).replace(/\n/g, '<br>'));
   aiHistory.push({ role: 'user', content: userMsg });
   const saved = data.queries.slice(0, 6).map(q => `- "${q.title}": ${q.sql.slice(0,100)}`).join('\n');
   const thinkEl = addMsg('ai', '<span class="thinking">Thinking...</span>');
-
+ 
   try {
     const res = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
@@ -565,14 +634,14 @@ async function askAI(userMsg) {
         model: 'claude-sonnet-4-20250514',
         max_tokens: 1200,
         system: `You are an expert SQL assistant for a team SQL repository. Help users write, explain, optimize and debug SQL.
-
+ 
 Always wrap SQL in \`\`\`sql ... \`\`\` code blocks.
 Be concise and practical.
 If you write a query the user might want to save, end with a JSON block:
 \`\`\`save
 {"title":"...","cat":"SELECT","type":"select","desc":"...","sql":"..."}
 \`\`\`
-
+ 
 Team's existing queries for context:
 ${saved}`,
         messages: aiHistory
@@ -581,10 +650,10 @@ ${saved}`,
     const json = await res.json();
     const text = json.content?.[0]?.text || 'Sorry, could not get a response.';
     aiHistory.push({ role: 'assistant', content: text });
-
+ 
     const saveMatch = text.match(/```save\n?([\s\S]*?)```/);
     let html = '';
-
+ 
     if (saveMatch) {
       try {
         const obj = JSON.parse(saveMatch[1]);
@@ -605,21 +674,21 @@ ${saved}`,
         html += `<div style="margin-top:10px"><button class="btn sm primary" onclick='prefillSave("${sqlStr.replace(/"/g,'&quot;')}">Save this query ↗</button></div>`;
       }
     }
-
+ 
     thinkEl.innerHTML = `<div class="msg-label">Claude AI</div>${html}`;
     document.getElementById('ai-msgs').scrollTop = 99999;
   } catch(err) {
     thinkEl.innerHTML = `<div class="msg-label">Claude AI</div><span style="color:var(--red)">Connection error. Check your internet and try again.</span>`;
   }
 }
-
+ 
 function formatAIText(text) {
   return text
     .replace(/```sql\n?([\s\S]*?)```/g, (_, sql) => `<pre>${esc(sql.trim())}</pre>`)
     .replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) => `<pre>${esc(code.trim())}</pre>`)
     .replace(/\n/g, '<br>');
 }
-
+ 
 function saveFromAI(jsonStr) {
   try {
     const obj = JSON.parse(jsonStr);
@@ -632,7 +701,7 @@ function saveFromAI(jsonStr) {
     toast('Query saved to repository!', 'success');
   } catch { toast('Could not save query', 'danger'); }
 }
-
+ 
 function prefillSave(sqlStr) {
   try {
     const sql = JSON.parse(sqlStr);
@@ -640,7 +709,7 @@ function prefillSave(sqlStr) {
     setTimeout(() => { const el = document.getElementById('f-sql'); if (el) el.value = sql; }, 60);
   } catch {}
 }
-
+ 
 renderCats();
 renderList();
 updateStats();
