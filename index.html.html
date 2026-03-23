@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team SQL Repository</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Syne:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0f0f;
+  --bg2: #161616;
+  --bg3: #1e1e1e;
+  --bg4: #252525;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0ede8;
+  --text2: #8a8780;
+  --text3: #555250;
+  --accent: #4f9cf9;
+  --accent-bg: rgba(79,156,249,0.12);
+  --accent-border: rgba(79,156,249,0.3);
+  --green: #5cb85c;
+  --green-bg: rgba(92,184,92,0.1);
+  --green-border: rgba(92,184,92,0.3);
+  --amber: #f0a500;
+  --amber-bg: rgba(240,165,0,0.1);
+  --amber-border: rgba(240,165,0,0.3);
+  --red: #e05252;
+  --red-bg: rgba(224,82,82,0.1);
+  --red-border: rgba(224,82,82,0.3);
+  --purple: #9b7ff4;
+  --purple-bg: rgba(155,127,244,0.12);
+  --purple-border: rgba(155,127,244,0.3);
+  --radius: 8px;
+  --radius-lg: 12px;
+  --font: 'Syne', sans-serif;
+  --mono: 'JetBrains Mono', monospace;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html, body { height: 100%; background: var(--bg); color: var(--text); font-family: var(--font); font-size: 14px; }
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--bg4); border-radius: 4px; }
+
+.app { display: flex; height: 100vh; overflow: hidden; }
+
+/* SIDEBAR */
+.sidebar { width: 220px; background: var(--bg2); border-right: 1px solid var(--border); display: flex; flex-direction: column; flex-shrink: 0; }
+.sb-logo { padding: 18px 16px 14px; border-bottom: 1px solid var(--border); }
+.sb-logo h1 { font-size: 15px; font-weight: 700; color: var(--text); letter-spacing: -0.02em; }
+.sb-logo p { font-size: 11px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+.sb-search { padding: 10px 12px; border-bottom: 1px solid var(--border); }
+.sb-search input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font-size: 12px; color: var(--text); font-family: var(--font); outline: none; }
+.sb-search input:focus { border-color: var(--border2); }
+.sb-search input::placeholder { color: var(--text3); }
+.cat-list { flex: 1; overflow-y: auto; padding: 8px 0; }
+.cat-item { display: flex; justify-content: space-between; align-items: center; padding: 7px 16px; cursor: pointer; font-size: 12px; color: var(--text2); transition: all 0.15s; }
+.cat-item:hover { background: var(--bg3); color: var(--text); }
+.cat-item.active { background: var(--bg3); color: var(--text); border-left: 2px solid var(--accent); }
+.cat-count { font-size: 10px; background: var(--bg4); color: var(--text3); padding: 1px 6px; border-radius: 10px; font-family: var(--mono); }
+.sb-footer { padding: 10px 12px; border-top: 1px solid var(--border); }
+.sb-footer input { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 8px; font-size: 11px; color: var(--text); font-family: var(--font); outline: none; margin-bottom: 6px; }
+.sb-footer input::placeholder { color: var(--text3); }
+.sb-btn { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px; font-size: 11px; color: var(--text2); cursor: pointer; font-family: var(--font); transition: all 0.15s; }
+.sb-btn:hover { background: var(--bg4); color: var(--text); }
+
+/* MAIN */
+.main { flex: 1; display: flex; flex-direction: column; min-width: 0; overflow: hidden; }
+.top-bar { display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-bottom: 1px solid var(--border); background: var(--bg2); flex-shrink: 0; }
+.top-bar h2 { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+.top-bar-right { display: flex; align-items: center; gap: 8px; }
+.author-wrap { display: flex; align-items: center; gap: 6px; }
+.author-input { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 6px 10px; font-size: 12px; color: var(--text); font-family: var(--font); outline: none; width: 120px; }
+.author-input::placeholder { color: var(--text3); }
+.avatar { width: 26px; height: 26px; border-radius: 50%; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--accent); font-size: 10px; font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.btn { background: var(--bg3); border: 1px solid var(--border2); border-radius: var(--radius); padding: 7px 14px; font-size: 12px; color: var(--text); cursor: pointer; font-family: var(--font); font-weight: 500; transition: all 0.15s; white-space: nowrap; }
+.btn:hover { background: var(--bg4); border-color: var(--border2); }
+.btn.primary { background: var(--accent-bg); border-color: var(--accent-border); color: var(--accent); }
+.btn.primary:hover { background: rgba(79,156,249,0.2); }
+.btn.success { background: var(--green-bg); border-color: var(--green-border); color: var(--green); }
+.btn.danger { background: var(--red-bg); border-color: var(--red-border); color: var(--red); }
+.btn.sm { font-size: 11px; padding: 4px 10px; }
+
+/* TABS */
+.tabs { display: flex; background: var(--bg2); border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.tab { padding: 10px 18px; font-size: 12px; font-weight: 500; cursor: pointer; color: var(--text3); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all 0.15s; }
+.tab:hover { color: var(--text2); }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab-pane { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+.tab-pane.active { display: flex; }
+
+/* QUERY LIST */
+.qbar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.qbar input { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font-size: 12px; color: var(--text); font-family: var(--font); outline: none; flex: 1; }
+.qbar input::placeholder { color: var(--text3); }
+.qbar input:focus { border-color: var(--border2); }
+.qbar select { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font-size: 12px; color: var(--text); font-family: var(--font); outline: none; cursor: pointer; }
+.qlist { flex: 1; overflow-y: auto; padding: 12px; }
+.qcard { background: var(--bg2); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 8px; overflow: hidden; transition: border-color 0.15s; }
+.qcard:hover { border-color: var(--border2); }
+.qcard.open { border-color: var(--accent-border); }
+.qhead { display: flex; align-items: center; gap: 10px; padding: 11px 14px; cursor: pointer; }
+.qtitle { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.qmeta { display: flex; align-items: center; gap: 6px; flex-shrink: 0; }
+.badge { font-size: 10px; font-weight: 600; padding: 2px 7px; border-radius: 6px; font-family: var(--mono); }
+.b-select { background: var(--accent-bg); color: var(--accent); border: 1px solid var(--accent-border); }
+.b-insert { background: var(--green-bg); color: var(--green); border: 1px solid var(--green-border); }
+.b-update { background: var(--amber-bg); color: var(--amber); border: 1px solid var(--amber-border); }
+.b-delete { background: var(--red-bg); color: var(--red); border: 1px solid var(--red-border); }
+.b-ddl { background: var(--purple-bg); color: var(--purple); border: 1px solid var(--purple-border); }
+.b-other { background: var(--bg4); color: var(--text2); border: 1px solid var(--border); }
+.qauthor { font-size: 10px; color: var(--text3); font-family: var(--mono); }
+.qbody { display: none; border-top: 1px solid var(--border); padding: 12px 14px; }
+.qcard.open .qbody { display: block; }
+.qdesc { font-size: 12px; color: var(--text2); margin-bottom: 10px; line-height: 1.6; }
+pre { font-family: var(--mono); font-size: 11.5px; color: #c9d1d9; background: #0d1117; border: 1px solid rgba(255,255,255,0.06); border-radius: var(--radius); padding: 12px 14px; overflow-x: auto; white-space: pre; line-height: 1.7; max-height: 180px; overflow-y: auto; }
+.qbtns { display: flex; gap: 6px; margin-top: 10px; flex-wrap: wrap; }
+.empty { text-align: center; padding: 3rem; color: var(--text3); font-size: 13px; line-height: 2; }
+
+/* AI CHAT */
+.ai-wrap { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+.ai-msgs { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+.msg { max-width: 88%; font-size: 13px; line-height: 1.65; }
+.msg.user { align-self: flex-end; background: var(--accent-bg); border: 1px solid var(--accent-border); color: var(--text); padding: 10px 14px; border-radius: 12px 12px 3px 12px; }
+.msg.ai { align-self: flex-start; background: var(--bg3); border: 1px solid var(--border); color: var(--text); padding: 10px 14px; border-radius: 3px 12px 12px 12px; }
+.msg.ai pre { margin-top: 8px; }
+.msg-label { font-size: 10px; color: var(--text3); margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; font-family: var(--mono); }
+.chips { display: flex; gap: 6px; flex-wrap: wrap; padding: 8px 14px; border-top: 1px solid var(--border); }
+.chip { font-size: 11px; padding: 5px 12px; border: 1px solid var(--border2); border-radius: 20px; color: var(--text2); cursor: pointer; background: var(--bg2); transition: all 0.15s; font-family: var(--font); }
+.chip:hover { background: var(--bg3); color: var(--text); border-color: var(--accent-border); }
+.ai-input-row { display: flex; gap: 8px; padding: 12px 14px; border-top: 1px solid var(--border); align-items: flex-end; background: var(--bg2); }
+.ai-input-row textarea { flex: 1; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 9px 12px; font-size: 13px; color: var(--text); font-family: var(--font); resize: none; height: 42px; max-height: 120px; outline: none; line-height: 1.5; }
+.ai-input-row textarea:focus { border-color: var(--border2); }
+.ai-input-row textarea::placeholder { color: var(--text3); }
+.thinking { color: var(--text3); font-style: italic; font-size: 12px; }
+.save-suggestion { background: var(--bg); border: 1px solid var(--green-border); border-radius: var(--radius); padding: 10px 12px; margin-top: 10px; }
+.save-suggestion p { font-size: 11px; color: var(--green); margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--mono); }
+.save-suggestion h4 { font-size: 13px; color: var(--text); margin-bottom: 8px; }
+
+/* RIGHT PANEL */
+.rpanel { width: 270px; border-left: 1px solid var(--border); background: var(--bg2); display: flex; flex-direction: column; flex-shrink: 0; }
+.rp-head { padding: 14px 14px 10px; border-bottom: 1px solid var(--border); }
+.rp-head h3 { font-size: 13px; font-weight: 600; color: var(--text); }
+.rp-body { flex: 1; overflow-y: auto; padding: 12px; }
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.stat { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px; text-align: center; }
+.stat-n { font-size: 22px; font-weight: 700; color: var(--text); font-family: var(--mono); }
+.stat-l { font-size: 10px; color: var(--text3); margin-top: 2px; }
+.form-group { margin-bottom: 12px; }
+.form-group label { font-size: 10px; color: var(--text3); display: block; margin-bottom: 4px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; font-family: var(--mono); }
+.form-group input, .form-group textarea, .form-group select { width: 100%; background: var(--bg3); border: 1px solid var(--border); border-radius: var(--radius); padding: 7px 10px; font-size: 12px; color: var(--text); font-family: var(--font); outline: none; transition: border-color 0.15s; }
+.form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--border2); }
+.form-group input::placeholder, .form-group textarea::placeholder { color: var(--text3); }
+.form-group textarea { resize: vertical; min-height: 58px; line-height: 1.5; }
+.form-group textarea.code { font-family: var(--mono); font-size: 11px; min-height: 130px; }
+.rp-foot { padding: 10px 12px; border-top: 1px solid var(--border); display: flex; gap: 6px; }
+
+/* TOAST */
+.toast { position: fixed; bottom: 20px; right: 20px; font-size: 12px; padding: 10px 16px; border-radius: var(--radius); opacity: 0; transition: opacity 0.2s; pointer-events: none; z-index: 999; border: 1px solid; font-family: var(--font); font-weight: 500; }
+.toast.show { opacity: 1; }
+.toast.success { background: var(--green-bg); color: var(--green); border-color: var(--green-border); }
+.toast.danger { background: var(--red-bg); color: var(--red); border-color: var(--red-border); }
+.toast.info { background: var(--accent-bg); color: var(--accent); border-color: var(--accent-border); }
+
+/* WELCOME NOTE */
+.welcome { font-size: 12px; color: var(--text2); line-height: 1.8; }
+.welcome b { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="app">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="sb-logo">
+      <h1>SQL Repository</h1>
+      <p>team workspace</p>
+    </div>
+    <div class="sb-search">
+      <input type="text" id="gsearch" placeholder="Search all..." oninput="renderList()">
+    </div>
+    <div class="cat-list" id="cat-list"></div>
+    <div class="sb-footer">
+      <input type="text" id="new-cat" placeholder="New collection name...">
+      <button class="sb-btn" onclick="addCat()">+ Add collection</button>
+    </div>
+  </div>
+
+  <!-- MAIN -->
+  <div class="main">
+    <div class="top-bar">
+      <h2 id="page-title">All queries</h2>
+      <div class="top-bar-right">
+        <div class="author-wrap">
+          <input class="author-input" type="text" id="author-name" placeholder="Your name..." oninput="updateAvatar()">
+          <div class="avatar" id="avatar">?</div>
+        </div>
+        <button class="btn primary" onclick="openNew()">+ New query</button>
+      </div>
+    </div>
+
+    <div class="tabs">
+      <div class="tab active" onclick="switchTab('queries',this)">Saved queries</div>
+      <div class="tab" onclick="switchTab('ai',this)">AI assistant</div>
+    </div>
+
+    <!-- QUERIES TAB -->
+    <div class="tab-pane active" id="tab-queries">
+      <div class="qbar">
+        <input type="text" id="qsearch" placeholder="Filter queries..." oninput="renderList()">
+        <select id="type-filter" onchange="renderList()">
+          <option value="">All types</option>
+          <option value="select">SELECT</option>
+          <option value="insert">INSERT</option>
+          <option value="update">UPDATE</option>
+          <option value="delete">DELETE</option>
+          <option value="ddl">DDL</option>
+          <option value="other">OTHER</option>
+        </select>
+        <button class="btn" onclick="exportData()">Export JSON</button>
+        <label class="btn" style="cursor:pointer">Import JSON<input type="file" accept=".json" onchange="importData(event)" style="display:none"></label>
+      </div>
+      <div class="qlist" id="qlist"></div>
+    </div>
+
+    <!-- AI TAB -->
+    <div class="tab-pane" id="tab-ai">
+      <div class="ai-wrap">
+        <div class="ai-msgs" id="ai-msgs">
+          <div class="msg ai">
+            <div class="msg-label">Claude AI</div>
+            Hi! I'm your team SQL assistant powered by Claude. I can write queries, explain SQL, optimize code, and save queries directly to your repository.<br><br>
+            Ask me anything or use the quick prompts below.
+          </div>
+        </div>
+        <div class="chips">
+          <span class="chip" onclick="askAI('Write a query to find duplicate records in a users table')">Find duplicates</span>
+          <span class="chip" onclick="askAI('Write a monthly revenue report query grouped by product category')">Revenue report</span>
+          <span class="chip" onclick="askAI('Write a query to get top 10 customers by total spend')">Top customers</span>
+          <span class="chip" onclick="askAI('Explain what a CTE is with a practical example')">Explain CTEs</span>
+          <span class="chip" onclick="askAI('Write an optimized full-text search query with indexes')">Search query</span>
+          <span class="chip" onclick="askAI('Write a query to find slow queries in MySQL performance schema')">Slow queries</span>
+        </div>
+        <div class="ai-input-row">
+          <textarea id="ai-input" placeholder="Ask Claude to write, explain or optimise SQL... (Enter to send)" onkeydown="aiKey(event)"></textarea>
+          <button class="btn primary" onclick="sendAI()">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RIGHT PANEL -->
+  <div class="rpanel" id="rpanel">
+    <div class="rp-head"><h3 id="rp-title">Overview</h3></div>
+    <div class="rp-body" id="rp-body">
+      <div class="stats-grid">
+        <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Queries</div></div>
+        <div class="stat"><div class="stat-n" id="s-cats">0</div><div class="stat-l">Collections</div></div>
+        <div class="stat"><div class="stat-n" id="s-authors">0</div><div class="stat-l">Contributors</div></div>
+        <div class="stat"><div class="stat-n" id="s-today">0</div><div class="stat-l">Today</div></div>
+      </div>
+      <div class="welcome">
+        <p>Welcome to your <b>Team SQL Repository</b>.</p><br>
+        <p>— Enter your name to track authorship</p>
+        <p>— Click <b>+ New query</b> to save SQL</p>
+        <p>— Use <b>AI assistant</b> to generate queries with Claude</p>
+        <p>— <b>Export JSON</b> to share with teammates</p>
+        <p>— <b>Import JSON</b> to load a teammate's queries</p>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const STORE = 'team_sql_v2';
+const defaultCats = ['All','SELECT','INSERT','UPDATE','DELETE','DDL','Reporting','ETL','Performance'];
+function td(){ return new Date().toISOString().slice(0,10); }
+function uid(){ return 'q' + Date.now() + Math.random().toString(36).slice(2,6); }
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+const defaultQueries = [
+  { id:'q1', title:'Active users', cat:'SELECT', type:'select', author:'Admin', desc:'All active users ordered by signup date.', sql:`SELECT id, name, email, created_at\nFROM users\nWHERE status = 'active'\nORDER BY created_at DESC;`, date: td() },
+  { id:'q2', title:'Monthly revenue report', cat:'Reporting', type:'select', author:'Admin', desc:'Revenue and order count grouped by month for the current year.', sql:`SELECT\n  DATE_FORMAT(order_date, '%Y-%m') AS month,\n  SUM(amount)                       AS revenue,\n  COUNT(*)                          AS total_orders\nFROM orders\nWHERE YEAR(order_date) = YEAR(CURDATE())\nGROUP BY month\nORDER BY month;`, date: td() },
+  { id:'q3', title:'Insert new product', cat:'INSERT', type:'insert', author:'Admin', desc:'Add a new product to the products table.', sql:`INSERT INTO products (name, category, price, stock, created_at)\nVALUES ('Product Name', 'Category', 99.99, 100, NOW());`, date: td() },
+  { id:'q4', title:'Update user email', cat:'UPDATE', type:'update', author:'Admin', desc:'Update a user email address by their ID.', sql:`UPDATE users\nSET    email      = 'new@email.com',\n       updated_at = NOW()\nWHERE  id = 1;`, date: td() },
+  { id:'q5', title:'Create users table', cat:'DDL', type:'ddl', author:'Admin', desc:'Full users table definition with indexes.', sql:`CREATE TABLE users (\n  id         INT          PRIMARY KEY AUTO_INCREMENT,\n  name       VARCHAR(100) NOT NULL,\n  email      VARCHAR(150) UNIQUE NOT NULL,\n  status     ENUM('active','inactive') DEFAULT 'active',\n  created_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP,\n  updated_at TIMESTAMP    DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,\n  INDEX idx_status (status),\n  INDEX idx_email  (email)\n);`, date: td() },
+];
+
+function loadData() {
+  try { const d = JSON.parse(localStorage.getItem(STORE)); if(d) return d; } catch(e){}
+  return { cats: [...defaultCats], queries: [...defaultQueries] };
+}
+function saveData(d) { try { localStorage.setItem(STORE, JSON.stringify(d)); } catch(e){} }
+
+let data = loadData();
+let activeCat = 'All';
+let openId = null;
+let editId = null;
+let aiHistory = [];
+
+function getAuthor() { return document.getElementById('author-name').value.trim() || 'Anonymous'; }
+function updateAvatar() {
+  const v = document.getElementById('author-name').value.trim();
+  document.getElementById('avatar').textContent = v ? v.slice(0,2).toUpperCase() : '?';
+}
+
+function switchTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-pane').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('tab-' + name).classList.add('active');
+}
+
+function renderCats() {
+  const cl = document.getElementById('cat-list');
+  cl.innerHTML = '';
+  data.cats.forEach(c => {
+    const cnt = c === 'All' ? data.queries.length : data.queries.filter(q => q.cat === c).length;
+    const d = document.createElement('div');
+    d.className = 'cat-item' + (activeCat === c ? ' active' : '');
+    d.innerHTML = `<span>${esc(c)}</span><span class="cat-count">${cnt}</span>`;
+    d.onclick = () => { activeCat = c; document.getElementById('page-title').textContent = c === 'All' ? 'All queries' : c; renderCats(); renderList(); closePanel(); };
+    cl.appendChild(d);
+  });
+}
+
+function renderList() {
+  const ql = document.getElementById('qlist');
+  const q1 = (document.getElementById('gsearch').value || '').toLowerCase();
+  const q2 = (document.getElementById('qsearch').value || '').toLowerCase();
+  const tf = document.getElementById('type-filter').value;
+  const q = q1 || q2;
+  let items = [...data.queries];
+  if (activeCat !== 'All') items = items.filter(i => i.cat === activeCat);
+  if (q) items = items.filter(i =>
+    i.title.toLowerCase().includes(q) ||
+    i.sql.toLowerCase().includes(q) ||
+    (i.desc||'').toLowerCase().includes(q) ||
+    (i.author||'').toLowerCase().includes(q)
+  );
+  if (tf) items = items.filter(i => i.type === tf);
+  if (!items.length) {
+    ql.innerHTML = '<div class="empty">No queries found.<br>Use + New query or ask the AI assistant.</div>';
+    updateStats(); return;
+  }
+  ql.innerHTML = '';
+  items.forEach(item => {
+    const d = document.createElement('div');
+    d.className = 'qcard' + (openId === item.id ? ' open' : '');
+    d.innerHTML = `
+      <div class="qhead" onclick="toggleQ('${item.id}')">
+        <span class="qtitle">${esc(item.title)}</span>
+        <span class="qmeta">
+          <span class="badge b-${esc(item.type||'other')}">${(item.type||'other').toUpperCase()}</span>
+          <span class="qauthor">${esc(item.author||'')}</span>
+        </span>
+      </div>
+      <div class="qbody">
+        <p class="qdesc">${esc(item.desc||'')}</p>
+        <pre>${esc(item.sql)}</pre>
+        <div class="qbtns">
+          <button class="btn sm" onclick="copyQ('${item.id}',event)">Copy SQL</button>
+          <button class="btn sm" onclick="editQ('${item.id}',event)">Edit</button>
+          <button class="btn sm success" onclick="askAbout('${item.id}',event)">Ask AI ↗</button>
+          <button class="btn sm danger" onclick="delQ('${item.id}',event)">Delete</button>
+        </div>
+      </div>`;
+    ql.appendChild(d);
+  });
+  updateStats();
+}
+
+function toggleQ(id) { openId = openId === id ? null : id; renderList(); }
+
+function updateStats() {
+  document.getElementById('s-total').textContent = data.queries.length;
+  document.getElementById('s-cats').textContent = data.cats.filter(c => c !== 'All').length;
+  document.getElementById('s-authors').textContent = new Set(data.queries.map(q => q.author)).size;
+  document.getElementById('s-today').textContent = data.queries.filter(q => q.date === td()).length;
+}
+
+function openNew() {
+  editId = null;
+  showForm({ title:'', cat: activeCat === 'All' ? 'SELECT' : activeCat, type:'select', desc:'', sql:'' });
+}
+
+function editQ(id, e) {
+  e.stopPropagation(); editId = id;
+  const item = data.queries.find(q => q.id === id);
+  if (item) showForm(item);
+}
+
+function showForm(item) {
+  document.getElementById('rp-title').textContent = editId ? 'Edit query' : 'New query';
+  const cats = data.cats.filter(c => c !== 'All').map(c => `<option value="${c}"${item.cat===c?' selected':''}>${esc(c)}</option>`).join('');
+  const types = ['select','insert','update','delete','ddl','other'].map(t => `<option value="${t}"${item.type===t?' selected':''}>${t.toUpperCase()}</option>`).join('');
+  document.getElementById('rp-body').innerHTML = `
+    <div class="form-group"><label>Title</label><input id="f-title" value="${esc(item.title||'')}" placeholder="e.g. Get active users"></div>
+    <div class="form-group"><label>Collection</label><select id="f-cat">${cats}</select></div>
+    <div class="form-group"><label>Type</label><select id="f-type">${types}</select></div>
+    <div class="form-group"><label>Description</label><textarea id="f-desc" placeholder="What does this query do?">${esc(item.desc||'')}</textarea></div>
+    <div class="form-group"><label>SQL</label><textarea id="f-sql" class="code" placeholder="SELECT ...">${esc(item.sql||'')}</textarea></div>`;
+  const ef = document.getElementById('rp-foot');
+  if (ef) ef.remove();
+  const foot = document.createElement('div');
+  foot.id = 'rp-foot'; foot.className = 'rp-foot';
+  foot.innerHTML = `<button class="btn primary" style="flex:1" onclick="saveForm()">Save query</button><button class="btn" onclick="closePanel()">Cancel</button>`;
+  document.getElementById('rpanel').appendChild(foot);
+}
+
+function saveForm() {
+  const title = document.getElementById('f-title').value.trim();
+  const sql = document.getElementById('f-sql').value.trim();
+  if (!title || !sql) { toast('Title and SQL are required', 'danger'); return; }
+  const q = {
+    id: editId || uid(),
+    title, sql,
+    cat: document.getElementById('f-cat').value,
+    type: document.getElementById('f-type').value,
+    desc: document.getElementById('f-desc').value.trim(),
+    author: getAuthor(),
+    date: td()
+  };
+  if (editId) {
+    const i = data.queries.findIndex(x => x.id === editId);
+    if (i > -1) data.queries[i] = q;
+  } else {
+    data.queries.unshift(q);
+  }
+  saveData(data); editId = null;
+  closePanel(); renderCats(); renderList();
+  toast('Query saved!', 'success');
+}
+
+function delQ(id, e) {
+  e.stopPropagation();
+  if (!confirm('Delete this query?')) return;
+  data.queries = data.queries.filter(q => q.id !== id);
+  saveData(data);
+  if (openId === id) openId = null;
+  renderCats(); renderList();
+  toast('Deleted', 'danger');
+}
+
+function copyQ(id, e) {
+  e.stopPropagation();
+  const item = data.queries.find(q => q.id === id);
+  if (!item) return;
+  navigator.clipboard.writeText(item.sql).then(() => toast('SQL copied!', 'success'));
+}
+
+function askAbout(id, e) {
+  e.stopPropagation();
+  const item = data.queries.find(q => q.id === id);
+  if (!item) return;
+  switchTab('ai', document.querySelectorAll('.tab')[1]);
+  askAI(`Please explain this query and suggest any improvements:\n\n${item.sql}`);
+}
+
+function closePanel() {
+  editId = null;
+  document.getElementById('rp-title').textContent = 'Overview';
+  document.getElementById('rp-body').innerHTML = `
+    <div class="stats-grid">
+      <div class="stat"><div class="stat-n" id="s-total">0</div><div class="stat-l">Queries</div></div>
+      <div class="stat"><div class="stat-n" id="s-cats">0</div><div class="stat-l">Collections</div></div>
+      <div class="stat"><div class="stat-n" id="s-authors">0</div><div class="stat-l">Contributors</div></div>
+      <div class="stat"><div class="stat-n" id="s-today">0</div><div class="stat-l">Today</div></div>
+    </div>
+    <div class="welcome">
+      <p>— Enter your name to track authorship</p><br>
+      <p>— Click <b>+ New query</b> to save SQL</p><br>
+      <p>— Use <b>AI assistant</b> tab to generate with Claude</p><br>
+      <p>— <b>Export / Import JSON</b> to share with teammates</p>
+    </div>`;
+  const ef = document.getElementById('rp-foot');
+  if (ef) ef.remove();
+  updateStats();
+}
+
+function addCat() {
+  const inp = document.getElementById('new-cat');
+  const v = inp.value.trim();
+  if (!v || data.cats.includes(v)) return;
+  data.cats.push(v); saveData(data); inp.value = '';
+  renderCats(); toast('"' + v + '" added', 'info');
+}
+document.getElementById('new-cat').addEventListener('keydown', e => { if (e.key === 'Enter') addCat(); });
+
+function exportData() {
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'sql-repository-' + td() + '.json';
+  a.click();
+  toast('Exported!', 'success');
+}
+
+function importData(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const imported = JSON.parse(ev.target.result);
+      if (!imported.queries) throw new Error();
+      imported.queries.forEach(q => {
+        if (!data.queries.find(x => x.id === q.id)) data.queries.unshift(q);
+      });
+      if (imported.cats) {
+        imported.cats.forEach(c => { if (!data.cats.includes(c)) data.cats.push(c); });
+      }
+      saveData(data); renderCats(); renderList();
+      toast('Imported ' + imported.queries.length + ' queries!', 'success');
+    } catch { toast('Invalid JSON file', 'danger'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function toast(msg, type) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast ' + (type || 'info');
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+function aiKey(e) { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendAI(); } }
+
+function addMsg(role, html) {
+  const box = document.getElementById('ai-msgs');
+  const d = document.createElement('div');
+  d.className = 'msg ' + role;
+  d.innerHTML = `<div class="msg-label">${role === 'user' ? 'You' : 'Claude AI'}</div>${html}`;
+  box.appendChild(d);
+  box.scrollTop = box.scrollHeight;
+  return d;
+}
+
+async function sendAI() {
+  const ta = document.getElementById('ai-input');
+  const msg = ta.value.trim();
+  if (!msg) return;
+  ta.value = ''; ta.style.height = '42px';
+  askAI(msg);
+}
+
+async function askAI(userMsg) {
+  switchTab('ai', document.querySelectorAll('.tab')[1]);
+  addMsg('user', esc(userMsg).replace(/\n/g, '<br>'));
+  aiHistory.push({ role: 'user', content: userMsg });
+  const saved = data.queries.slice(0, 6).map(q => `- "${q.title}": ${q.sql.slice(0,100)}`).join('\n');
+  const thinkEl = addMsg('ai', '<span class="thinking">Thinking...</span>');
+
+  try {
+    const res = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1200,
+        system: `You are an expert SQL assistant for a team SQL repository. Help users write, explain, optimize and debug SQL.
+
+Always wrap SQL in \`\`\`sql ... \`\`\` code blocks.
+Be concise and practical.
+If you write a query the user might want to save, end with a JSON block:
+\`\`\`save
+{"title":"...","cat":"SELECT","type":"select","desc":"...","sql":"..."}
+\`\`\`
+
+Team's existing queries for context:
+${saved}`,
+        messages: aiHistory
+      })
+    });
+    const json = await res.json();
+    const text = json.content?.[0]?.text || 'Sorry, could not get a response.';
+    aiHistory.push({ role: 'assistant', content: text });
+
+    const saveMatch = text.match(/```save\n?([\s\S]*?)```/);
+    let html = '';
+
+    if (saveMatch) {
+      try {
+        const obj = JSON.parse(saveMatch[1]);
+        const cleaned = text.replace(/```save[\s\S]*?```/, '').trim();
+        html = formatAIText(cleaned);
+        const objStr = esc(JSON.stringify(obj));
+        html += `<div class="save-suggestion">
+          <p>Save to repository</p>
+          <h4>${esc(obj.title)}</h4>
+          <button class="btn sm success" onclick='saveFromAI("${objStr.replace(/"/g,"&quot;")}">Save query</button>
+        </div>`;
+      } catch { html = formatAIText(text); }
+    } else {
+      html = formatAIText(text);
+      const sqlMatch = text.match(/```sql\n?([\s\S]*?)```/);
+      if (sqlMatch) {
+        const sqlStr = esc(JSON.stringify(sqlMatch[1].trim()));
+        html += `<div style="margin-top:10px"><button class="btn sm primary" onclick='prefillSave("${sqlStr.replace(/"/g,'&quot;')}">Save this query ↗</button></div>`;
+      }
+    }
+
+    thinkEl.innerHTML = `<div class="msg-label">Claude AI</div>${html}`;
+    document.getElementById('ai-msgs').scrollTop = 99999;
+  } catch(err) {
+    thinkEl.innerHTML = `<div class="msg-label">Claude AI</div><span style="color:var(--red)">Connection error. Check your internet and try again.</span>`;
+  }
+}
+
+function formatAIText(text) {
+  return text
+    .replace(/```sql\n?([\s\S]*?)```/g, (_, sql) => `<pre>${esc(sql.trim())}</pre>`)
+    .replace(/```[\w]*\n?([\s\S]*?)```/g, (_, code) => `<pre>${esc(code.trim())}</pre>`)
+    .replace(/\n/g, '<br>');
+}
+
+function saveFromAI(jsonStr) {
+  try {
+    const obj = JSON.parse(jsonStr);
+    obj.id = uid(); obj.author = getAuthor(); obj.date = td();
+    if (!obj.cat) obj.cat = 'SELECT';
+    if (!obj.type) obj.type = 'select';
+    if (!data.cats.includes(obj.cat)) data.cats.push(obj.cat);
+    data.queries.unshift(obj);
+    saveData(data); renderCats(); renderList();
+    toast('Query saved to repository!', 'success');
+  } catch { toast('Could not save query', 'danger'); }
+}
+
+function prefillSave(sqlStr) {
+  try {
+    const sql = JSON.parse(sqlStr);
+    openNew();
+    setTimeout(() => { const el = document.getElementById('f-sql'); if (el) el.value = sql; }, 60);
+  } catch {}
+}
+
+renderCats();
+renderList();
+updateStats();
+</script>
+</body>
+</html>
